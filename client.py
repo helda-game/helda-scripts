@@ -3,21 +3,24 @@ import json
 import os
 
 
-email = os.environ['HELDA_API_EMAIL']
-password = os.environ['HELDA_API_PASSWORD']
+def login():
+    protocol = os.environ['HELDA_API_PROTOCOL']
+    host = os.environ['HELDA_API_HOST']
+    email = os.environ['HELDA_API_EMAIL']
+    password = os.environ['HELDA_API_PASSWORD']
 
-print(email)
-print(password)
+    if protocol == 'http':
+        conn = http.client.HTTPConnection(host)
+    else:
+        conn = http.client.HTTPSConnection(host)
 
-conn = http.client.HTTPConnection('localhost:3000')
+    headers = {'Content-type': 'application/json'}
+    login_details = {'email': email, 'password': password}
+    conn.request("POST", "/auth/auth-bot", json.dumps(login_details), headers)
+    response = conn.getresponse()
+    if response.status == 200:
+        global token
+        token = json.loads(response.read().decode())["token"]
 
-headers = {'Content-type': 'application/json'}
-
-# foo = {'text': 'Hello HTTP #1 **cool**, and #1!'}
-# json_data = json.dumps(foo)
-
-
-conn.request("GET", "/meta/env-info")
-response = conn.getresponse()
-print(response.status, response.reason)
-print(response.read().decode())
+login()
+print(token)
