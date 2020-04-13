@@ -4,6 +4,7 @@ import os
 
 
 def login():
+    world_name = os.environ['HELDA_API_WORLD_NAME']
     protocol = os.environ['HELDA_API_PROTOCOL']
     host = os.environ['HELDA_API_HOST']
     email = os.environ['HELDA_API_EMAIL']
@@ -21,6 +22,28 @@ def login():
     if response.status == 200:
         global token
         token = json.loads(response.read().decode())["token"]
+        headers = {
+                    'Content-type': 'application/json',
+                    'Authorization': 'Token ' + token
+                    }
+        url = "/worlds/find-world?world_name=" + world_name
+        conn.request("GET", url, "", headers)
+        response = conn.getresponse()
+        if response.status == 200:
+            global world_id
+            world_id = json.loads(response.read().decode())["id"]
+        else:
+            dump_response("Error for url: " + url, response)
+    else:
+        dump_response("Authentication failed!", response)
+
+def dump_response(title, response):
+    print("=============================================")
+    print(title)
+    print(response.status)
+    print(response.reason)
+    print(response.read().decode())
 
 login()
-print(token)
+# print(token)
+print(world_id)
