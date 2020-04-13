@@ -32,10 +32,13 @@ def login():
         if response.status == 200:
             global world_id
             world_id = json.loads(response.read().decode())["id"]
+            return world_id
         else:
             dump_response("Error for url: " + url, response)
+            return None
     else:
         dump_response("Authentication failed!", response)
+        return None
 
 def dump_response(title, response):
     print("=============================================")
@@ -44,6 +47,8 @@ def dump_response(title, response):
     print(response.reason)
     print(response.read().decode())
 
-login()
 # print(token)
-print(world_id)
+if login():
+    print(world_id)
+else:
+    print("Something went wrong!")
