@@ -58,3 +58,6 @@ def on_world_loaded(response_body):
     print("world_id: " + world_id)
 
 login()
+if world_id:
+    print("Success!")
+    #Postprocessing goes here!
