@@ -2,53 +2,59 @@ import http.client
 import json
 import os
 
+protocol = os.environ['HELDA_API_PROTOCOL']
+host = os.environ['HELDA_API_HOST']
 
-def login():
-    world_name = os.environ['HELDA_API_WORLD_NAME']
-    protocol = os.environ['HELDA_API_PROTOCOL']
-    host = os.environ['HELDA_API_HOST']
-    email = os.environ['HELDA_API_EMAIL']
-    password = os.environ['HELDA_API_PASSWORD']
+# global api_headers
+# global world_id
 
+def dump_response(url, response, response_body):
+    print("=============================================")
+    print(url + " response: ")
+    print(response.status)
+    print(response.reason)
+    print(response_body)
+
+def get(url, on_success, on_error=dump_response):
+    call_service("GET", url, None, on_success, on_error)
+
+def post(url, body, on_success, on_error=dump_response):
+    call_service("POST", url, body, on_success, on_error)
+
+def call_service(http_method, url, body, on_success, on_error=dump_response):
     if protocol == 'http':
         conn = http.client.HTTPConnection(host)
     else:
         conn = http.client.HTTPSConnection(host)
-
-    headers = {'Content-type': 'application/json'}
-    login_details = {'email': email, 'password': password}
-    conn.request("POST", "/auth/auth-bot", json.dumps(login_details), headers)
+    conn.request(http_method, url, json.dumps(body) if body else None, api_headers)
     response = conn.getresponse()
     if response.status == 200:
-        global token
-        token = json.loads(response.read().decode())["token"]
-        headers = {
-                    'Content-type': 'application/json',
-                    'Authorization': 'Token ' + token
-                    }
-        url = "/worlds/find-world?world_name=" + world_name
-        conn.request("GET", url, "", headers)
-        response = conn.getresponse()
-        if response.status == 200:
-            global world_id
-            world_id = json.loads(response.read().decode())["id"]
-            return world_id
-        else:
-            dump_response("Error for url: " + url, response)
-            return None
+        on_success(json.loads(response.read().decode()))
     else:
-        dump_response("Authentication failed!", response)
-        return None
+        on_error(url, response, response.read().decode())
 
-def dump_response(title, response):
-    print("=============================================")
-    print(title)
-    print(response.status)
-    print(response.reason)
-    print(response.read().decode())
+def login():
+    email = os.environ['HELDA_API_EMAIL']
+    password = os.environ['HELDA_API_PASSWORD']
 
-# print(token)
-if login():
-    print(world_id)
-else:
-    print("Something went wrong!")
+    global api_headers
+    api_headers = {'Content-type': 'application/json'}
+
+    post("/auth/auth-bot", {'email': email, 'password': password}, on_login)
+
+def on_login(response_body):
+    global api_headers
+    api_headers = {
+                    'Content-type': 'application/json',
+                    'Authorization': 'Token ' + response_body["token"]
+                    }
+    print("Token: " + response_body["token"])
+    world_name = os.environ['HELDA_API_WORLD_NAME']
+    get("/worlds/find-world?world_name=" + world_name, on_world_loaded)
+
+def on_world_loaded(response_body):
+    global world_id
+    world_id = response_body["id"]
+    print("world_id: " + world_id)
+
+login()
