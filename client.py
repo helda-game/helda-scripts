@@ -57,6 +57,14 @@ def on_world_loaded(response_body):
     world_id = response_body["id"]
     print("world_id: " + world_id)
 
+def publish_update(iteration_ctx):
+    iteration_ctx['world_id'] = world_id
+    iteration_ctx['update_kind'] = 'update'
+    post(
+        "/world-updates/publish-world-update",
+        iteration_ctx,
+        lambda r: print("World updated: " + r)
+        )
 # login()
 # if world_id:
 #     print("Success!")
