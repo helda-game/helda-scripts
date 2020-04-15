@@ -49,7 +49,13 @@ class WorldUpdateBuilder(object):
         self.msgs = []
 
     def draw_bg_tile(self, tile):
+        self.remove_bg_tile(tile.map_x, tile.map_y)
         self.drawing['background_tiles'].append(tile.__dict__)
+
+    def remove_bg_tile(self, map_x, map_y):
+        self.drawing['background_tiles'] = [
+            tile for tile in self.drawing['background_tiles']
+            if (tile.map_x == map_x) and (tile.map_y == map_y) ]
 
     def draw_fg_tile(self, tile):
         self.drawing['foreground_tiles'].append(tile.__dict__)
