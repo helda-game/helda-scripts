@@ -57,7 +57,7 @@ def on_world_loaded(response_body):
     world_id = response_body["id"]
     print("world_id: " + world_id)
 
-login()
-if world_id:
-    print("Success!")
+# login()
+# if world_id:
+#     print("Success!")
     #Postprocessing goes here!
