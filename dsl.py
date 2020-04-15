@@ -35,10 +35,41 @@ class Tile(object):
         self.tile_x = tile_x
         self.tile_y = tile_y
 
+class WorldUpdateBuilder(object):
+    """WorldUpdateBuilder"""
+
+    def __init__(self,
+        seq_num = 1,
+        drawing = {'background_tiles' : [], 'foreground_tiles' : [], 'sprites': []}
+        ):
+
+        super(WorldUpdateBuilder, self).__init__()
+        self.seq_num = seq_num
+        self.drawing = drawing
+        self.msgs = []
+
+    def draw_bg_tile(self, tile):
+        self.drawing['background_tiles'].append(tile.__dict__)
+
+    def draw_fg_tile(self, tile):
+        self.drawing['foreground_tiles'].append(tile.__dict__)
+
+    def draw_sprite(self, tile):
+        self.drawing['sprite'].append(tile.__dict__)
+
+    def print_msg(self, msg):
+        self.msgs.append(msg.__dict__)
+
+    def new_update(self):
+        self.seq_num += 1
+        self.msgs = []
+
 t = Tile("green", 1, 1)
 m = Msg("HELLO")
 m2 = Msg("WORLD")
 
-print(t.__dict__)
-print(m.__dict__)
-print(m2.__dict__)
+w = WorldUpdateBuilder()
+w.draw_bg_tile(t)
+w.print_msg(m)
+w.print_msg(m2)
+print(w.__dict__)
