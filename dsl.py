@@ -1,4 +1,6 @@
 
+import client
+
 import json
 
 # class JsonSerializable(object):
@@ -50,6 +52,7 @@ class WorldUpdateBuilder(object):
         super(WorldUpdateBuilder, self).__init__()
         self.seq_num = seq_num
         self.drawing = drawing
+        self.command_responses = []
         self.msgs = []
 
     def draw_bg_tile(self, tile):
@@ -79,16 +82,9 @@ class WorldUpdateBuilder(object):
     def print_msg(self, msg):
         self.msgs.append(msg.__dict__)
 
+    def send_update(self):
+        client.publish_update(self.__dict__)
+
     def new_update(self):
         self.seq_num += 1
         self.msgs = []
-
-t = Tile("green", 1, 1)
-m = Msg("HELLO")
-m2 = Msg("WORLD")
-
-w = WorldUpdateBuilder()
-w.draw_bg_tile(t)
-w.print_msg(m)
-w.print_msg(m2)
-print(w.__dict__)

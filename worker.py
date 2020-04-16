@@ -3,8 +3,11 @@ import client
 
 import time
 
+iteration_ctx = None
+
 def process_iteration(iteration_count, iteration_handler):
-    iteration_handler(iteration_count)
+    global iteration_ctx
+    iteration_ctx = iteration_handler(iteration_count, iteration_ctx)
 
 
 def main_loop(iteration_handler):
@@ -20,4 +23,4 @@ def start_worker(iteration_handler):
         print("Login success!")
         main_loop(iteration_handler)
 
-start_worker(lambda i: print(i))
+# start_worker(lambda i: print(i))

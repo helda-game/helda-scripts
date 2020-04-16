@@ -62,7 +62,7 @@ def publish_update(iteration_ctx):
     post(
         "/world-updates/publish-world-update",
         iteration_ctx,
-        lambda r: print("World updated: " + r)
+        lambda r: print("World updated! ")
         )
 # login()
 # if world_id:
