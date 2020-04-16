@@ -35,6 +35,10 @@ class Tile(object):
         self.tile_x = tile_x
         self.tile_y = tile_y
 
+def remove_tile(tiles, map_x, map_y):
+    return [tile for tile in tiles
+            if (tile['map_x'] == map_x) and (tile['map_y'] == map_y)]
+
 class WorldUpdateBuilder(object):
     """WorldUpdateBuilder"""
 
@@ -53,15 +57,24 @@ class WorldUpdateBuilder(object):
         self.drawing['background_tiles'].append(tile.__dict__)
 
     def remove_bg_tile(self, map_x, map_y):
-        self.drawing['background_tiles'] = [
-            tile for tile in self.drawing['background_tiles']
-            if (tile.map_x == map_x) and (tile.map_y == map_y) ]
+        self.drawing['background_tiles'] =
+            remove_tile(self.drawing['background_tiles'], map_x, map_y)
 
     def draw_fg_tile(self, tile):
+        self.remove_fg_tile(tile.map_x, tile.map_y)
         self.drawing['foreground_tiles'].append(tile.__dict__)
 
+    def remove_fg_tile(self, map_x, map_y):
+        self.drawing['foreground_tiles'] =
+            remove_tile(self.drawing['foreground_tiles'], map_x, map_y)
+
     def draw_sprite(self, tile):
+        self.remove_sprite(tile.map_x, tile.map_y)
         self.drawing['sprite'].append(tile.__dict__)
+
+    def remove_sprite(self, map_x, map_y):
+        self.drawing['sprites'] =
+            remove_tile(self.drawing['sprites'], map_x, map_y)
 
     def print_msg(self, msg):
         self.msgs.append(msg.__dict__)
