@@ -57,7 +57,7 @@ class WorldUpdateBuilder(object):
         self.drawing['background_tiles'].append(tile.__dict__)
 
     def remove_bg_tile(self, map_x, map_y):
-        self.drawing['background_tiles'] =
+        self.drawing['background_tiles'] = \
             remove_tile(self.drawing['background_tiles'], map_x, map_y)
 
     def draw_fg_tile(self, tile):
@@ -65,7 +65,7 @@ class WorldUpdateBuilder(object):
         self.drawing['foreground_tiles'].append(tile.__dict__)
 
     def remove_fg_tile(self, map_x, map_y):
-        self.drawing['foreground_tiles'] =
+        self.drawing['foreground_tiles'] = \
             remove_tile(self.drawing['foreground_tiles'], map_x, map_y)
 
     def draw_sprite(self, tile):
@@ -73,7 +73,7 @@ class WorldUpdateBuilder(object):
         self.drawing['sprite'].append(tile.__dict__)
 
     def remove_sprite(self, map_x, map_y):
-        self.drawing['sprites'] =
+        self.drawing['sprites'] = \
             remove_tile(self.drawing['sprites'], map_x, map_y)
 
     def print_msg(self, msg):
